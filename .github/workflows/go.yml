@@ -1,0 +1,51 @@
+name: Go CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run Go Tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.22'
+        cache: true # Automatically caches your Go modules for faster runs
+
+    - name: Run Tests
+      run: go test -v ./...
+
+  build-and-push:
+    name: Build and Push Hardened Docker Image
+    needs: test # Ensures the image only builds if all tests pass successfully
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: actions/docker-setup-buildx-action@v3
+
+    - name: Log in to Docker Hub
+      uses: actions/docker-login-action@v3
+      with:
+        username: $DOCKERHUB_USERNAME
+        password: $DOCKERHUB_TOKEN
+
+    - name: Build and Push Image
+      uses: actions/docker-build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        # Replaces 'devops-assignment' with your desired Docker Hub repository name
+        tags: |
+          $DOCKERHUB_USERNAME/devops-assignment:latest
+          $DOCKERHUB_USERNAME/devops-assignment:${{ github.sha }}
