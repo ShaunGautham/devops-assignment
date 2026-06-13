@@ -45,7 +45,5 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        # Replaces 'devops-assignment' with your desired Docker Hub repository name
-        tags: |
-          $DOCKERHUB_USERNAME/devops-assignment:latest
-          $DOCKERHUB_USERNAME/devops-assignment:${{ github.sha }}
+        tags: $DOCKERHUB_USERNAME/$env.IMAGE_NAME:v1.0.0
+          
