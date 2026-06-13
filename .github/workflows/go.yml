@@ -25,6 +25,7 @@ jobs:
   build-and-push:
     name: Build and Push Hardened Docker Image
     needs: test # Ensures the image only builds if all tests pass successfully
+    environment: devops
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
