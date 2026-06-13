@@ -1,0 +1,15 @@
+- name: Copy HTML template
+  template:
+    src: index.html.j2
+    dest: /tmp/index.html
+
+- name: Run nginx container
+  docker_container:
+    name: nginx-app
+    image: nginx:stable
+    state: started
+    restart_policy: always
+    ports:
+      - "80:80"
+    volumes:
+      - /tmp/index.html:/usr/share/nginx/html/index.html

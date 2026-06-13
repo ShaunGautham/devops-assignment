@@ -1,0 +1,27 @@
+- name: Install Docker
+  apt:
+    name: docker.io
+    state: present
+
+- name: Enable Docker
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: Configure Docker daemon logging
+  copy:
+    dest: /etc/docker/daemon.json
+    content: |
+      {
+        "log-driver": "json-file",
+        "log-opts": {
+          "max-size": "10m",
+          "max-file": "3"
+        }
+      }
+
+- name: Restart Docker
+  systemd:
+    name: docker
+    state: restarted

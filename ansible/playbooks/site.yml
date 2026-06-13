@@ -1,0 +1,9 @@
+- name: Full DevOps Server Setup
+  hosts: servers
+  become: true
+
+  roles:
+    - common
+    - docker
+    - nginx
+    - node_exporter
