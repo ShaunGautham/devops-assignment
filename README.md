@@ -145,7 +145,7 @@ Implemented through:
 ### Multiple Replicas
 
 ```yaml
-replicas: 3
+replicas: 2
 ```
 
 ### Rolling Updates
