@@ -1,0 +1,32 @@
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.*
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Optional: ignore local tfvars if they contain secrets
+# terraform.tfvars
+
+# Kubernetes
+kubeconfig
+
+# Ansible
+*.retry
+
+# Go
+bin/
+coverage.out
