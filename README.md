@@ -222,6 +222,7 @@ Verify:
 ```bash
 kubectl get all -n production
 ```
+<img width="1972" height="456" alt="image" src="https://github.com/user-attachments/assets/34338d01-a4ad-4263-963f-ec01fd845bef" />
 
 ---
 
@@ -247,6 +248,10 @@ Features:
 - Self-Healing
 - Drift Detection
 - Declarative GitOps Deployment
+
+<img width="1784" height="1150" alt="image" src="https://github.com/user-attachments/assets/4bb2f822-672d-4590-905c-5cd8c704959e" />
+
+<img width="2840" height="1408" alt="image" src="https://github.com/user-attachments/assets/d5569fb8-cf29-4877-8834-571aa2ebc6a8" />
 
 ---
 
@@ -352,6 +357,8 @@ ansible-playbook \
 -i inventory/hosts.ini \
 playbooks/site.yml
 ```
+<img width="2016" height="1360" alt="image" src="https://github.com/user-attachments/assets/def826dc-1163-4800-a384-45094cee00f0" />
+<img width="1424" height="414" alt="image" src="https://github.com/user-attachments/assets/9f6420aa-8dbe-45ca-ab67-78cb92edc5f4" />
 
 ---
 
@@ -370,6 +377,8 @@ Example:
 ```text
 devops-test
 ```
+<img width="924" height="60" alt="image" src="https://github.com/user-attachments/assets/62e6a767-dd76-4c61-9fa3-63b5cb8a6321" />
+
 
 The same manifests are designed for deployment to GKE provisioned through Terraform.
 
