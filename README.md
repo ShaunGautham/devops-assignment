@@ -1,44 +1,408 @@
-**Candidate Assignment Instructions:**
+# DevOps Assignment
 
-The sample application is developed using Go. Our development team would like to deliver this application to Production. As a DevOps engineer, you are responsible to complete the tasks by following these key areas: High Availability, Scalability, Security.
+## Overview
 
-**Tasks:**
+This repository contains a production-oriented deployment implementation for the provided Go application.
 
-1. Create a **Dockerfile** and **.dockerignore** for a given application (Bonus Point: ***Docker Hardened Images*** and ***multi-stage build***)
+The solution demonstrates:
 
-    **Expected Output:** Dockerfile
+- Containerization using Docker
+- CI/CD using GitHub Actions
+- Kubernetes deployment using Kustomize
+- GitOps deployment using ArgoCD
+- Infrastructure provisioning using Terraform
+- Configuration management using Ansible
+- High Availability
+- Scalability
+- Security Best Practices
 
-2. Build the image using the Dockerfile and push to Docker Hub, *DO NOT* use `latest` tag.
+---
 
-    **Expected Output:** Build and push command and Docker Hub URL
+# Repository Structure
 
-3. Create a Kustomize manifest to deploy the image from the previous step. The Kustomize should have flexibility to allow Developer to adjust values without having to rebuild the Kustomize frequently
+```text
+.
+├── .github/workflows/
+│   └── go.yml
+│
+├── ansible/
+│   ├── inventory/
+│   │   └── hosts.ini
+│   ├── playbooks/
+│   │   └── site.yml
+│   ├── roles/
+│   │   ├── common/
+│   │   ├── docker/
+│   │   ├── nginx/
+│   │   └── node_exporter/
+│   └── ansible.cfg
+│
+├── argocd/
+│   └── application.yml
+│
+├── kustomize/
+│   ├── base/
+│   │   ├── deployment.yml
+│   │   ├── service.yml
+│   │   ├── hpa.yml
+│   │   ├── pdb.yml
+│   │   └── kustomization.yml
+│   │
+│   └── overlays/prod/
+│       ├── namespace.yml
+│       ├── patch.yml
+│       └── kustomization.yml
+│
+├── terraform/
+│   ├── provider.tf
+│   ├── version.tf
+│   ├── vpc.tf
+│   ├── gke.tf
+│   ├── nodepool.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   └── terraform.tfvars
+│
+├── Dockerfile
+├── main.go
+├── main_test.go
+├── go.mod
+└── README.md
+```
 
-    **Expected Output:** Kustomize manifest file to deploy the application with production-grade workload resilience (resource requests/limits, health probes, rolling updates, PDB, anti-affinity, and security context).
+---
 
-4. Setup GKE cluster with the related resources to run GKE like VPC, Subnets, etc. by following GKE Best Practices using any IaC tools (Terraform, OpenTufo, Pulumi) (Bonus point: use Terraform/Terragrunt)
+# Application
 
-    **Expected Output:** IaC code
+A simple Go HTTP application exposing port `8080`.
 
-    * ***Important Condition***: Avoid injecting the generated GCP access keys to the application directly. **Expected Output:** Kustomize manifest, IaC code or anything to complete this task.
+Example:
 
+```bash
+curl "http://localhost:8080?name=Shaun"
+```
 
-5. Use ArgoCD to deploy this application. To follow GitOps practices, we prefer to have an ArgoCD application defined declaratively in a YAML file if possible.
+Response:
 
-    **Expected output:** Yaml files and instruction how to deploy the application or command line
+```text
+Hello Shaun
+```
 
-6. Setting up centralized observability stacks to monitoring our infrastructure 
+---
 
-    **Expected Outputs:** Dashboard to monitoring infrastructure end-to-end included Metrics, Logs and Traces and configuration your stacks (Bonus point: using LGTM stacks)
+# Docker
 
-7. Create CICD workflow using GitOps pipeline to build and deploy application 
+## Features
 
-    **Expected output:** GitOps pipeline (Github, Gitlab, Bitbucket, Jenkins) workflow or diagram
+- Multi-stage build
+- Minimal runtime image
+- Non-root execution
+- Hardened container principles
+- Optimized image size
 
-8. Using Ansible Playbooks, to install and managed Linux package following requirements
-    - Update OS packages
-    - Install Docker, configure docker daemon for logs rotation 
-    - Run NGINX Docker image with custom HTML page from template, restart policy always and expose port.
-    - Install Node Exporter as systemd service with a dedicated non-login system user
+## Build Image
 
-    **Expected Outputs:** A fully structured Ansible project directory and execution command
+```bash
+docker build -t thurazaw000/devops-assignment:v1.0.0 .
+```
+
+## Push Image
+
+```bash
+docker push thurazaw000/devops-assignment:v1.0.0
+```
+
+## Docker Hub
+
+https://hub.docker.com/r/thurazaw000/devops-assignment
+
+---
+
+# Kubernetes Deployment
+
+Kustomize is used to manage Kubernetes manifests.
+
+## Base Resources
+
+- Deployment
+- Service
+- Horizontal Pod Autoscaler
+- Pod Disruption Budget
+
+## Production Overlay
+
+- Namespace configuration
+- Replica customization
+- Environment-specific overrides
+
+---
+
+# High Availability
+
+Implemented through:
+
+### Multiple Replicas
+
+```yaml
+replicas: 3
+```
+
+### Rolling Updates
+
+```yaml
+maxUnavailable: 1
+maxSurge: 1
+```
+
+### Pod Anti-Affinity
+
+Distributes replicas across available nodes whenever possible.
+
+### Pod Disruption Budget
+
+```yaml
+minAvailable: 2
+```
+
+Ensures application availability during maintenance operations.
+
+---
+
+# Scalability
+
+Horizontal Pod Autoscaler configured:
+
+```yaml
+minReplicas: 2
+maxReplicas: 5
+targetCPUUtilizationPercentage: 70
+```
+
+The application automatically scales based on CPU utilization.
+
+---
+
+# Security
+
+Implemented security controls:
+
+```yaml
+securityContext:
+  runAsUser: 1000
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+```
+
+Additional protections:
+
+- Non-root container execution
+- Resource limits
+- Namespace isolation
+- Immutable image versioning
+
+---
+
+# Deploy with Kustomize
+
+Create namespace:
+
+```bash
+kubectl create namespace production
+```
+
+Deploy:
+
+```bash
+kubectl apply -k kustomize/overlays/prod
+```
+
+Verify:
+
+```bash
+kubectl get all -n production
+```
+
+---
+
+# ArgoCD (GitOps)
+
+ArgoCD is configured to deploy the application declaratively from Git.
+
+Application manifest:
+
+```text
+argocd/application.yml
+```
+
+Deploy ArgoCD Application:
+
+```bash
+kubectl apply -f argocd/application.yml
+```
+
+Features:
+
+- Automated Sync
+- Self-Healing
+- Drift Detection
+- Declarative GitOps Deployment
+
+---
+
+# Terraform Infrastructure
+
+Terraform provisions:
+
+- VPC
+- Subnet
+- GKE Cluster
+- Node Pool
+- Networking Resources
+
+Terraform files:
+
+```text
+terraform/
+```
+
+Initialize:
+
+```bash
+terraform init
+```
+
+Plan:
+
+```bash
+terraform plan
+```
+
+Apply:
+
+```bash
+terraform apply
+```
+
+---
+
+# Workload Identity
+
+The solution avoids injecting static GCP access keys into application containers.
+
+Workload Identity is used to provide secure access to Google Cloud resources following GKE security best practices.
+
+---
+
+# CI/CD Pipeline
+
+GitHub Actions workflow:
+
+```text
+.github/workflows/go.yml
+```
+
+Pipeline stages:
+
+1. Checkout Source
+2. Run Go Tests
+3. Build Docker Image
+4. Push Image to Docker Hub
+
+This ensures only validated code is packaged and published.
+
+---
+
+# Ansible Automation
+
+Ansible provisions Linux hosts according to assignment requirements.
+
+## Tasks Performed
+
+### Common
+
+- Update OS packages
+
+### Docker
+
+- Install Docker
+- Configure log rotation
+
+### NGINX
+
+- Run NGINX container
+- Deploy custom HTML template
+- Configure restart policy
+- Expose HTTP service
+
+### Node Exporter
+
+- Install Node Exporter
+- Create dedicated non-login system user
+- Configure systemd service
+
+---
+
+## Execute Ansible
+
+```bash
+cd ansible
+
+ansible-playbook \
+-i inventory/hosts.ini \
+playbooks/site.yml
+```
+
+---
+
+# Local Validation
+
+Kubernetes manifests were validated using Kind.
+
+Cluster:
+
+```bash
+kind get clusters
+```
+
+Example:
+
+```text
+devops-test
+```
+
+The same manifests are designed for deployment to GKE provisioned through Terraform.
+
+---
+
+# Assignment Requirement Coverage
+
+| Requirement | Status |
+|------------|---------|
+| Dockerfile | ✅ |
+| Multi-stage Build | ✅ |
+| Docker Hub Push | ✅ |
+| Kustomize | ✅ |
+| Resource Requests/Limits | ✅ |
+| Health Probes | ✅ |
+| Rolling Updates | ✅ |
+| Pod Disruption Budget | ✅ |
+| Anti-Affinity | ✅ |
+| Security Context | ✅ |
+| HPA | ✅ |
+| ArgoCD GitOps | ✅ |
+| Terraform GKE | ✅ |
+| VPC/Subnet Provisioning | ✅ |
+| Workload Identity Design | ✅ |
+| Ansible Automation | ✅ |
+| Node Exporter | ✅ |
+| NGINX Container | ✅ |
+| Docker Log Rotation | ✅ |
+
+---
+
+# Author
+
+**Thura Zaw (Shaun Gautham)**
+
+DevOps Engineer
