@@ -10,6 +10,7 @@ The solution demonstrates:
 - CI/CD using GitHub Actions
 - Kubernetes deployment using Kustomize
 - GitOps deployment using ArgoCD
+- Monitoring using Grafana, Prometheus, Loki, and Promtail
 - Infrastructure provisioning using Terraform
 - Configuration management using Ansible
 - High Availability
@@ -145,7 +146,7 @@ Implemented through:
 ### Multiple Replicas
 
 ```yaml
-replicas: 2
+replicas: 3
 ```
 
 ### Rolling Updates
@@ -253,6 +254,95 @@ Features:
 <img width="1784" height="1150" alt="image" src="https://github.com/user-attachments/assets/4bb2f822-672d-4590-905c-5cd8c704959e" />
 
 <img width="2840" height="1408" alt="image" src="https://github.com/user-attachments/assets/d5569fb8-cf29-4877-8834-571aa2ebc6a8" />
+
+---
+
+## Observability
+
+A centralized observability stack was deployed using Helm charts and consists of Grafana, Prometheus, Loki, and Promtail running in a dedicated Kubernetes namespace named `monitoring`.
+
+### Components
+
+| Component | Purpose |
+|-----------|---------|
+| Grafana | Visualization and dashboards |
+| Prometheus | Metrics collection and storage |
+| Loki | Centralized log aggregation |
+| Promtail | Log collection from Kubernetes pods |
+
+### Monitoring Stack Deployment
+
+The observability stack was deployed using Helm in the `monitoring` namespace.
+
+#### Installation
+
+```bash
+# Create monitoring namespace
+kubectl create namespace monitoring
+
+# Add Helm repositories
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+
+# Install Prometheus, Grafana, Alertmanager, kube-state-metrics and Node Exporter
+helm install monitoring prometheus-community/kube-prometheus-stack \
+  -n monitoring
+
+# Install Loki
+helm install loki grafana/loki \
+  -n monitoring
+
+# Install Promtail
+helm install promtail grafana/promtail \
+  -n monitoring
+
+<img width="1796" height="412" alt="image" src="https://github.com/user-attachments/assets/418e1e3d-7568-4a73-bf2c-7d26949e0724" />
+
+Namespace layout:
+
+monitoring
+├── Grafana
+├── Prometheus
+├── Alertmanager
+├── kube-state-metrics
+├── Node Exporter
+├── Loki
+└── Promtail
+
+Metrics Monitoring
+
+Prometheus collects Kubernetes and workload metrics, including:
+
+Pod CPU utilization
+Pod memory consumption
+Kubernetes workload status
+Cluster resource utilization
+
+Grafana dashboards provide real-time visibility into infrastructure and application performance through preconfigured Kubernetes monitoring dashboards.
+
+Log Aggregation
+
+Promtail collects logs from Kubernetes pods and forwards them to Loki for centralized log storage and querying.
+
+Logs can be explored through Grafana's Explore view using the Loki datasource, enabling centralized log analysis across workloads running in the cluster.
+
+Example log source:
+log-test pod (BusyBox test workload)
+
+### Screenshots
+
+#### Grafana Metrics Dashboard
+
+<img width="2846" height="1604" alt="image" src="https://github.com/user-attachments/assets/577c0837-fdd1-4c17-b717-9be4e186aa13" />
+
+#### Loki Log Explorer
+
+<img width="1427" height="801" alt="Screenshot 2026-06-15 at 1 40 49 AM" src="https://github.com/user-attachments/assets/93970c2e-ca15-4ea2-8120-1179c8aa4fd4" />
+
+#### Kubernetes Pod Metrics
+
+<img width="2846" height="1602" alt="image" src="https://github.com/user-attachments/assets/bd286f1e-01a5-4137-8608-cee85b72ca0b" />
 
 ---
 
@@ -401,7 +491,14 @@ The same manifests are designed for deployment to GKE provisioned through Terraf
 | Anti-Affinity | ✅ |
 | Security Context | ✅ |
 | HPA | ✅ |
+| Helm | ✅ |
 | ArgoCD GitOps | ✅ |
+| Grafana | ✅ |
+| Prometheus | ✅ |
+| Loki | ✅ |
+| Promtail | ✅ |
+| Centralized Monitoring | ✅ |
+| Centralized Logging | ✅ |
 | Terraform GKE | ✅ |
 | VPC/Subnet Provisioning | ✅ |
 | Workload Identity Design | ✅ |
