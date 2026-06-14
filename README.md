@@ -87,6 +87,7 @@ Response:
 ```text
 Hello Shaun
 ```
+<img width="908" height="282" alt="image" src="https://github.com/user-attachments/assets/0b1c26f6-d56c-403f-bee8-d9f0625a87c7" />
 
 ---
 
@@ -378,7 +379,6 @@ Example:
 devops-test
 ```
 <img width="924" height="60" alt="image" src="https://github.com/user-attachments/assets/62e6a767-dd76-4c61-9fa3-63b5cb8a6321" />
-
 
 The same manifests are designed for deployment to GKE provisioned through Terraform.
 
