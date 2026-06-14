@@ -253,6 +253,7 @@ Features:
 
 <img width="1784" height="1150" alt="image" src="https://github.com/user-attachments/assets/4bb2f822-672d-4590-905c-5cd8c704959e" />
 
+
 <img width="2840" height="1408" alt="image" src="https://github.com/user-attachments/assets/d5569fb8-cf29-4877-8834-571aa2ebc6a8" />
 
 ---
@@ -276,7 +277,7 @@ The observability stack was deployed using Helm in the `monitoring` namespace.
 
 #### Installation
 
-```bash
+```
 # Create monitoring namespace
 kubectl create namespace monitoring
 
@@ -296,12 +297,15 @@ helm install loki grafana/loki \
 # Install Promtail
 helm install promtail grafana/promtail \
   -n monitoring
+```
 
 <img width="1796" height="412" alt="image" src="https://github.com/user-attachments/assets/418e1e3d-7568-4a73-bf2c-7d26949e0724" />
 
 Namespace layout:
 
+```text
 monitoring
+
 ├── Grafana
 ├── Prometheus
 ├── Alertmanager
@@ -309,11 +313,11 @@ monitoring
 ├── Node Exporter
 ├── Loki
 └── Promtail
+```
 
-Metrics Monitoring
+## Metrics Monitoring
 
 Prometheus collects Kubernetes and workload metrics, including:
-
 Pod CPU utilization
 Pod memory consumption
 Kubernetes workload status
@@ -321,16 +325,13 @@ Cluster resource utilization
 
 Grafana dashboards provide real-time visibility into infrastructure and application performance through preconfigured Kubernetes monitoring dashboards.
 
-Log Aggregation
+## Log Aggregation
 
 Promtail collects logs from Kubernetes pods and forwards them to Loki for centralized log storage and querying.
-
 Logs can be explored through Grafana's Explore view using the Loki datasource, enabling centralized log analysis across workloads running in the cluster.
 
 Example log source:
 log-test pod (BusyBox test workload)
-
-### Screenshots
 
 #### Grafana Metrics Dashboard
 
@@ -451,6 +452,7 @@ ansible-playbook \
 playbooks/site.yml
 ```
 <img width="2016" height="1360" alt="image" src="https://github.com/user-attachments/assets/def826dc-1163-4800-a384-45094cee00f0" />
+
 <img width="1424" height="414" alt="image" src="https://github.com/user-attachments/assets/9f6420aa-8dbe-45ca-ab67-78cb92edc5f4" />
 
 ---
