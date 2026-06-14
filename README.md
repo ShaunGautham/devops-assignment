@@ -266,6 +266,8 @@ Terraform provisions:
 - Node Pool
 - Networking Resources
 
+Terraform provisions a custom VPC, subnet, GKE cluster, managed node pool, and Workload Identity configuration following GKE security best practices.
+
 Terraform files:
 
 ```text
