@@ -258,7 +258,7 @@ Features:
 
 ---
 
-## Observability
+# Observability
 
 A centralized observability stack was deployed using Helm charts and consists of Grafana, Prometheus, Loki, and Promtail running in a dedicated Kubernetes namespace named `monitoring`.
 
@@ -275,7 +275,7 @@ A centralized observability stack was deployed using Helm charts and consists of
 
 The observability stack was deployed using Helm in the `monitoring` namespace.
 
-#### Installation
+### Installation
 
 ```
 # Create monitoring namespace
@@ -301,7 +301,7 @@ helm install promtail grafana/promtail \
 
 <img width="1796" height="412" alt="image" src="https://github.com/user-attachments/assets/418e1e3d-7568-4a73-bf2c-7d26949e0724" />
 
-Namespace layout:
+### Namespace layout:
 
 ```text
 monitoring
@@ -315,7 +315,7 @@ monitoring
 └── Promtail
 ```
 
-## Metrics Monitoring
+### Metrics Monitoring
 
 Prometheus collects Kubernetes and workload metrics, including:
 Pod CPU utilization
@@ -325,7 +325,7 @@ Cluster resource utilization
 
 Grafana dashboards provide real-time visibility into infrastructure and application performance through preconfigured Kubernetes monitoring dashboards.
 
-## Log Aggregation
+### Log Aggregation
 
 Promtail collects logs from Kubernetes pods and forwards them to Loki for centralized log storage and querying.
 Logs can be explored through Grafana's Explore view using the Loki datasource, enabling centralized log analysis across workloads running in the cluster.
